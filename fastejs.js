@@ -18,17 +18,17 @@ const __default = {
     "end": true
 }
 let tags = {
-    "begin": ".replace(/\\n/g, '\\uffff')",
-    "<%_": ".replace(/(\\s|\\uffff)*<%_/g, '<%')",
-    "_%>": ".replace(/_%>(\\s|\\uffff)*/g, '%>')",
-    "<%=": ".replace(/<%=([^%]+) %>/g, '`; out += __escapeHTML($1) + `')",
-    "<%-": ".replace(/<%-([^%]+) %>/g, '`; out += $1 + `')",
-    "<%#": ".replace(/<%#([^%]+) %>/g, '')",
-    "<% ": ".replace(/<%(\\s|\\uffff)/g, '`; ')",
-    " %>": ".replace(/(\\s|\\uffff)%>/g, '; out +=`')",
+    "begin": ".replace(/\\n/g, '\\uffff')", // new lines => \uffff  (\uffff is not a used character so it is perfect for this)
+    "<%_": ".replace(/(\\s|\\uffff)*<%_/g, '<%')", // <%_ => <%  (removes all whitespace before it and replaces with <% for later use)
+    "_%>": ".replace(/_%>(\\s|\\uffff)*/g, '%>')", // _%> => %>  (removes all whitespace after it and replaces with %> for later use)
+    "<%=": ".replace(/<%=([^%]+) %>/g, '`; out += __escapeHTML($1) + `')", // <%=SOME_JS %> escaped output
+    "<%-": ".replace(/<%-([^%]+) %>/g, '`; out += $1 + `')", //  <%-SOME_JS %> non-escaped output
+    "<%#": ".replace(/<%#([^%]+) %>/g, '')", //  <%#SOME_JS %> comment
+    "<% ": ".replace(/<%(\\s|\\uffff)/g, '`; ')", //  <%  script open tag
+    " %>": ".replace(/(\\s|\\uffff)%>/g, '; out +=`')", // %> script close tag
     "<%%": ".replace(/<%%/g, '<%')", // <%% => <%
     "%%>": ".replace(/%%>/g, '%>')", // %%> => %>
-    "end": ".replace(/\\uffff/g, '\\n')"
+    "end": ".replace(/\\uffff/g, '\\n')" // \uffff => new lines
 }
 
 module.exports = class FastEJS {
@@ -59,11 +59,14 @@ module.exports = class FastEJS {
         str = eval(toEval)
 
         // extends output
-        str = 'let out = `' + str + '`; return out'
+        str = 'let out = `' + str + '`; out'
 
         // eval
         try {
-            return (new Function(...Object.keys(data), str))(...Object.values(data))
+            for(let i in data)
+                global[i] = data[i]
+            return eval(str)
+            //return (new Function(...Object.keys(data), str))(...Object.values(data))
         } catch (err) {
             throw "Error while evaling the compiled ejs: " + str + " The error: " + err
         }

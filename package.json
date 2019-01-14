@@ -1,0 +1,28 @@
+{
+  "name": "fastejs",
+  "version": "1.0.0",
+  "description": "Faster and better implementation for ejs",
+  "main": "fastejs.js",
+  "scripts": {
+    "test": "mocha fastejs.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fxdave/fastejs.git"
+  },
+  "keywords": [
+    "faster",
+    "ejs",
+    "template",
+    "parser"
+  ],
+  "author": "David Judge",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fxdave/fastejs/issues"
+  },
+  "homepage": "https://github.com/fxdave/fastejs#readme",
+  "dependencies": {
+    "mocha": "^5.2.0"
+  }
+}

@@ -1,64 +1,67 @@
+const __escapeHTML = function (unsafe) {
+    if (unsafe.replace)
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    else
+        return unsafe
+}
+
+const __default = {
+    "begin": true,
+    "<% ": true,
+    " %>": true,
+    "<%=": true,
+    "end": true
+}
+let tags = {
+    "begin": ".replace(/\\n/g, '\\uffff')",
+    "<%_": ".replace(/(\\s|\\uffff)*<%_/g, '<%')",
+    "_%>": ".replace(/_%>(\\s|\\uffff)*/g, '%>')",
+    "<%=": ".replace(/<%=([^%]+) %>/g, '`; out += __escapeHTML($1) + `')",
+    "<%-": ".replace(/<%-([^%]+) %>/g, '`; out += $1 + `')",
+    "<%#": ".replace(/<%#([^%]+) %>/g, '')",
+    "<% ": ".replace(/<%(\\s|\\uffff)/g, '`; ')",
+    " %>": ".replace(/(\\s|\\uffff)%>/g, '; out +=`')",
+    "<%%": ".replace(/<%%/g, '<%')", // <%% => <%
+    "%%>": ".replace(/%%>/g, '%>')", // %%> => %>
+    "end": ".replace(/\\uffff/g, '\\n')"
+}
+
 module.exports = class FastEJS {
 
-    static parse(str, data = {}, options) {
 
-        data.__escapeHTML = function(unsafe) {
-            if (unsafe.replace)
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            else
-                return unsafe
-        }
+    /**
+        <% 'Scriptlet' tag, for control-flow, no output
+        <%_ ‘Whitespace Slurping’ Scriptlet tag, strips all whitespace before it
+        <%= Outputs the value into the template (HTML escaped)
+        <%- Outputs the unescaped value into the template
+        <%# Comment tag, no execution, no output
+        <%% Outputs a literal '<%'
+        %> Plain ending tag
+        -%> Trim-mode ('newline slurp') tag, trims following newline
+        _%> ‘Whitespace Slurping’ ending tag, removes all whitespace after it
+    */
+    static parse(str, data = { __escapeHTML: null }) {
+        // add escape to data
+        data.__escapeHTML = __escapeHTML
 
-        if(!options) {
-            options = { tags: {} }
-        }
+        // build parser
+        let toEval = "str = str"
+        for (let i in tags)
+            toEval += tags[i]
+        toEval += "; str"
 
-        options.tags = {
-            "begin": true,
-            "end": true,
-            "<% " : true,
-            " %>" : true,
-            "<%=" : true,
-            ...options.tags
-        }
+        // run parser
+        str = eval(toEval)
 
-        /**
-            <% 'Scriptlet' tag, for control-flow, no output
-            <%_ ‘Whitespace Slurping’ Scriptlet tag, strips all whitespace before it
-            <%= Outputs the value into the template (HTML escaped)
-            <%- Outputs the unescaped value into the template
-            <%# Comment tag, no execution, no output
-            <%% Outputs a literal '<%'
-            %> Plain ending tag
-            -%> Trim-mode ('newline slurp') tag, trims following newline
-            _%> ‘Whitespace Slurping’ ending tag, removes all whitespace after it
-        */
-
-        let tags = {
-            "begin" : str => str.replace(/\n/g, '\uffff'),
-            "<%_" : str => str.replace(/(\s|\uffff)*<%_/g, '<%'),
-            "_%>" : str => str.replace(/_%>(\s|\uffff)*/g, '%>'),
-            "<%=" : str => str.replace(/<%=([^%]+) %>/g, '`; out += __escapeHTML($1) + `'),
-            "<%-" : str => str.replace(/<%-([^%]+)-%>/g, '`; out += $1 + `'),
-            "<%#" : str => str.replace(/<%#([^%]+) %>/g, ''),
-            "<% " : str => str.replace(/<%(\s|\uffff)/g, '`; '),
-            " %>" : str => str.replace(/(\s|\uffff)%>/g, '; out +=`'),
-            "<%%" : str => str.replace(/<%%/g, '<%'), // <%% => <%
-            "%%>" : str => str.replace(/%%>/g, '%>'), // %%> => %>
-            "end" : str => str.replace(/\uffff/g, '\n')
-        }
-        
-        for(let i in tags) 
-            if(options.tags[i])
-                str = tags[i](str)
-        
+        // extends output
         str = 'let out = `' + str + '`; return out'
-        
+
+        // eval
         try {
             return (new Function(...Object.keys(data), str))(...Object.values(data))
         } catch (err) {
@@ -67,5 +70,8 @@ module.exports = class FastEJS {
 
     }
 
-    
+
 }
+
+
+module.exports.tags = tags

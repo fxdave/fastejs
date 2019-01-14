@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/fxdave/fastejs#readme",
   "dependencies": {
+    "ejs": "^2.6.1",
     "mocha": "^5.2.0"
   }
 }

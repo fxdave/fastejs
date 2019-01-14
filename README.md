@@ -1,7 +1,7 @@
 # FastEJS
 Faster, better implementation for the known ejs package.
 It looks like ejs, so syntax highlighting will work.
-It's about half the time of the execution speed of the original ejs. 
+It's about half the time of the execution time of the original ejs. 
 But it can be faster depending on the template size, and the config.
 
 ## Requirements

@@ -17,6 +17,7 @@ const __default = {
     "<%=": true,
     "end": true
 }
+
 let tags = {
     "begin": ".replace(/\\n/g, '\\uffff')", // new lines => \uffff  (\uffff is not a used character so it is perfect for this)
     "<%_": ".replace(/(\\s|\\uffff)*<%_/g, '<%')", // <%_ => <%  (removes all whitespace before it and replaces with <% for later use)
@@ -34,7 +35,7 @@ let tags = {
 module.exports = class FastEJS {
 
 
-    /**
+    /*
         <% 'Scriptlet' tag, for control-flow, no output
         <%_ ‘Whitespace Slurping’ Scriptlet tag, strips all whitespace before it
         <%= Outputs the value into the template (HTML escaped)
@@ -45,6 +46,12 @@ module.exports = class FastEJS {
         -%> Trim-mode ('newline slurp') tag, trims following newline
         _%> ‘Whitespace Slurping’ ending tag, removes all whitespace after it
     */
+
+    /**
+     * 
+     * @param {string} str is the template
+     * @param {Object} data is the vars that will be given to the template
+     */
     static parse(str, data = { __escapeHTML: null }) {
         // add escape to data
         data.__escapeHTML = __escapeHTML

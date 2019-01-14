@@ -36,15 +36,15 @@ it("tests the <%= %> tag", function () {
 
 })
 
-it("tests the <%- -%> tag", function () {
+it("tests the <%- %> tag", function () {
 
-    rendered = FastEJS.parse(`<%- "<helloka>" -%>`)
+    rendered = FastEJS.parse(`<%- "<helloka>" %>`)
     assert.equal(rendered, "<helloka>")
 
-    rendered = FastEJS.parse(`<%- 123 -%>`)
+    rendered = FastEJS.parse(`<%- 123 %>`)
     assert.equal(rendered, "123")
 
-    rendered = FastEJS.parse(`<%- false -%>`)
+    rendered = FastEJS.parse(`<%- false %>`)
     assert.equal(rendered, "false")
 
 })

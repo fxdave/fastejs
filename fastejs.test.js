@@ -67,28 +67,19 @@ it("tests the _%> tag", function () {
 
 it("tests the speed", function () {
     let begin = new Date()
-    for (let i = 0; i < 10000; i++) {
-        FastEJS.parse(` 
-        asdasda
-        <% a.forEach(num => { %>
-            <%=a %> asasd
-        <% }) %>
-        asdasd
-    `, { a: [1, 2, 3] })
+    const template = ` 
+    asdasda <% a.forEach(num => { %> <%=a %> asasd <% }) %> asdasd
+`
+    for (let i = 0; i < 1000; i++) {
+        FastEJS.parse(template, { a: [1, 2, 3] })
     }
     let end = new Date()
     let estimatedFastejs = end - begin
     
 
     begin = new Date()
-    for (let i = 0; i < 10000; i++) {
-        ejs.render(` 
-        asdasda
-        <% a.forEach(num => { %>
-            <%=a %> asasd
-        <% }) %>
-        asdasd
-    `, { a: [1, 2, 3] })
+    for (let i = 0; i < 1000; i++) {
+        ejs.render(template, { a: [1, 2, 3] })
     }
     end = new Date()
     let estimatedEjs = end - begin

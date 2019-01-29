@@ -1,6 +1,6 @@
 {
   "name": "fastejs",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Faster and better implementation for ejs",
   "main": "fastejs.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "url": "https://github.com/fxdave/fastejs/issues"
   },
   "homepage": "https://github.com/fxdave/fastejs#readme",
-  "dependencies": {
+  "devDependencies": {
     "ejs": "^2.6.1",
     "mocha": "^5.2.0"
   }

@@ -4,6 +4,8 @@ It looks like ejs, so syntax highlighting will work.
 It's about half the the execution time of the original ejs. 
 But it can be faster depending on the template size, and the config.
 
+PLEASE DO NOT USE IN HIGH RISK SYSTEMS (but if you want so, why JS?).
+
 ## Requirements
 EcmaScript 6 (The new node.js supports it without babel)
 

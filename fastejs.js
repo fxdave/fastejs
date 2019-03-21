@@ -77,7 +77,7 @@ module.exports = {
             return eval(str)
             //return (new Function(...Object.keys(data), str))(...Object.values(data))
         } catch (err) {
-            throw "Error while evaling the compiled ejs: " + str + " The error: " + err
+            throw "Error while evaling the compiled ejs: " + str + " The error: " + err.stack
         }
 
     }

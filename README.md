@@ -22,6 +22,8 @@ EcmaScript 6 (The new node.js supports it without babel)
 | ' %>'  | Plain ending tag |
 | '_%>' | ‘Whitespace Slurping’ ending tag, removes all whitespace after it |
 
+This basically uses javascript's string template, so you can also write ${ 1+2 } this will be rendered as 3.
+
 ## Tuning
 You can reach faster execution speed if you turn off features.
 
